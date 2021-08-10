@@ -1,3 +1,7 @@
+**This is a private version of bot, see details below.**
+
+*-- Original README.md start --*
+
 # Genshin Artifact Rater - https://discord.gg/SyGmBxds3M
 
 Discord bot that rates an artifact against an optimal 5* artifact. Put the command and image in the same message.
@@ -65,4 +69,53 @@ python3.8 bot.py
 Edit `url` in `rate_artifact.py`
 ```
 python3.8 rate_artifact.py
+```
+
+*-- Original README.md end --*
+
+# Modifications
+This is a forked project, I&#39;m trying to avoid as much modification to the original code just in case the original project is updated, I may easily apply the modifications I made to this project to the new one.
+
+The original bot can be freely use by everyone via DM or by adding it to a channel in a Discord server.
+
+In this version, the bot is turned into a private bot, the bot&#39;s main functionality can only be used to the channel(s) allowed by the bot admin.
+
+### Added bot admin commands
+
+#### DM commands:
+
+`-channel list` lists the channel IDs where the bot is allowed to respond
+
+`-channel grant CHANNEL_ID` enable the bot to respond to the given channel
+
+`-channel revoke CHANNEL_ID` disable the bot to respond to the given channel
+
+#### Channel commands:
+
+`-channel grant` enable the bot to respond to the current channel
+
+`-channel revoke` disable the bot to respond to the current channel
+
+#### DM/Channel commands:
+
+`-channel info` shows the current channel ID and to check if the bot is enabled/disabled in the channel
+
+`-ping` ping the bot
+
+### Additional setup
+
+This additional environment variables must be added in `.env`
+```
+EXT_ADMIN_ID=<discord_user_id>
+EXT_CHANNEL_DB_URL=<channel_db_path>
+```
+
+Example `.env` file
+```
+DISCORD_TOKEN=zI2g0FFXj2ncjJfz3F4Q0lk6.UAkp-u.LdecfRzCa6NIVV892M5jpeEzKow
+OCR_SPACE_API_KEY=ggHpcldNFAjl84C
+DATABASE_URL=sqlite:///database.db
+
+EXT_ADMIN_ID=900000000000000000
+EXT_CHANNEL_DB_URL=sqlite:///extensions/channels.db
 ```

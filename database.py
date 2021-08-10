@@ -35,7 +35,7 @@ class Preset(Base):
 		self.entry_id = entry_id
 		self.name = name
 
-# Base.metadata.create_all(engine)
+Base.metadata.create_all(engine)
 
 Session = sessionmaker()
 Session.configure(bind=engine)

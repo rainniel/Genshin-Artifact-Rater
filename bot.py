@@ -11,6 +11,7 @@ import validators
 from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from signal import SIGINT, SIGTERM
+from extensions import extension as ext
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -137,6 +138,8 @@ async def send(ctx, msg=None, embed=None):
 async def config(ctx):
 	if DEVELOPMENT and not (ctx.channel and ctx.channel.id == DEV_CHANNEL_ID):
 		return
+	if not ext.is_channel_granted(ctx.channel.id):
+		return
 	if not DATABASE_URL:
 		return
 
@@ -197,6 +200,8 @@ async def config(ctx):
 async def sets(ctx):
 	if DEVELOPMENT and not (ctx.channel and ctx.channel.id == DEV_CHANNEL_ID):
 		return
+	if not ext.is_channel_granted(ctx.channel.id):
+		return
 	if not DATABASE_URL:
 		return
 
@@ -230,6 +235,8 @@ def create_embed(lang):
 @commands.cooldown(RATE_LIMIT_N, RATE_LIMIT_TIME, commands.BucketType.user)
 async def help(ctx):
 	if DEVELOPMENT and not (ctx.channel and ctx.channel.id == DEV_CHANNEL_ID):
+		return
+	if not ext.is_channel_granted(ctx.channel.id):
 		return
 
 	lang = get_lang(ctx)
@@ -282,6 +289,8 @@ async def rate(ctx):
 	global calls, crashes
 
 	if DEVELOPMENT and not (ctx.channel and ctx.channel.id == DEV_CHANNEL_ID):
+		return
+	if not ext.is_channel_granted(ctx.channel.id):
 		return
 
 	lang = get_lang(ctx)
@@ -399,6 +408,8 @@ async def rate(ctx):
 async def feedback(ctx):
 	if DEVELOPMENT and not (ctx.channel and ctx.channel.id == DEV_CHANNEL_ID):
 		return
+	if not ext.is_channel_granted(ctx.channel.id):
+		return
 
 	lang = get_lang(ctx)
 
@@ -434,13 +445,16 @@ if __name__ == '__main__':
 		print('Error: DISCORD_TOKEN not found')
 		sys.exit(1)
 
+	ext.init_extension_commands(bot, RATE_LIMIT_N, RATE_LIMIT_TIME)
+
 	loop = asyncio.get_event_loop()
 
 	def interrupt():
 		raise KeyboardInterrupt
 
-	loop.add_signal_handler(SIGINT, interrupt)
-	loop.add_signal_handler(SIGTERM, interrupt)
+	if not sys.platform.startswith('win'):
+		loop.add_signal_handler(SIGINT, interrupt)
+		loop.add_signal_handler(SIGTERM, interrupt)
 
 	try:
 		loop.run_until_complete(bot.start(TOKEN))
